@@ -1,0 +1,61 @@
+# Archivos temporales
+temp/
+*.tmp
+*.log
+
+# Configuraciones locales
+config/mail.development.php
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Directorios de logs
+logs/
+
+# Dependencias y librerías de terceros
+vendor/
+plataforma/assets/adminlte/
+plataforma/assets/plugins/
+public/assets/plugins/
+
+# Archivos de entorno específicos
+*.env
+.env
+
+# Archivos de caché
+*.cache
+
+# Archivos de configuración del IDE
+.idea/
+.vscode/
+*.sublime-*
+
+# Archivos de configuración sensibles
+config/mail.production.php
+
+# Archivos de dependencias
+/node_modules/
+
+# Archivos de caché y logs
+*.log
+/cache/
+
+# Archivos protegidos (versiones finales - no modificar)
+# Comentar estas líneas solo si se necesita hacer cambios específicos
+public/views/contacto_content.php
+public/views/index_content.php
+public/views/planes_content.php
+public/views/demo_content.php
+public/views/login_content.php
+public/views/login.php
+public/controllers/login_controller.php
+# public/views/registro_content.php
+public/includes/footer.php
+public/includes/header.php
+public/includes/navbar.php
+
+# Archivos de configuración finalizados - TEMPORALMENTE DESCOMENTADOS
+# config/common.php
+# config/database.php
+# .htaccess

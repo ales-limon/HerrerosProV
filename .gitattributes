@@ -1,0 +1,9 @@
+# Archivos que no deben modificarse (versiones finales)
+public/views/contacto_content.php binary
+public/views/index_content.php binary
+public/views/planes_content.php binary
+public/views/demo_content.php binary
+public/views/registro_content.php binary
+public/includes/footer.php binary
+public/includes/header.php binary
+public/includes/navbar.php binary 
