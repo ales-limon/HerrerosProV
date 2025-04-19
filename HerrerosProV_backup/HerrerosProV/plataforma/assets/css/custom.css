@@ -1,0 +1,132 @@
+/* Estilos personalizados para HerrerosPro Plataforma Admin */
+
+/* Mejoras visuales para notificaciones Toastr */
+.toast {
+    opacity: 1 !important;
+}
+
+.toast-success {
+    background-color: #28a745 !important;
+}
+
+.toast-error {
+    background-color: #dc3545 !important;
+}
+
+.toast-info {
+    background-color: #17a2b8 !important;
+}
+
+.toast-warning {
+    background-color: #ffc107 !important;
+}
+
+/* Mejoras para la interfaz AdminLTE */
+.content-wrapper {
+    background-color: #f4f6f9;
+}
+
+.card {
+    box-shadow: 0 0 1px rgba(0,0,0,.125), 0 1px 3px rgba(0,0,0,.2);
+    margin-bottom: 1rem;
+}
+
+/* Estilos para tablas responsivas */
+.table-responsive {
+    margin-bottom: 1rem;
+}
+
+/* Estilos para formularios */
+.form-group.required .control-label:after {
+    content: "*";
+    color: #dc3545;
+    margin-left: 4px;
+}
+
+/* Estilos para botones de acción */
+.btn-action {
+    margin-right: 5px;
+}
+
+.btn-action:last-child {
+    margin-right: 0;
+}
+
+/* Estilos para badges personalizados */
+.badge-pending {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.badge-approved {
+    background-color: #28a745;
+    color: #fff;
+}
+
+.badge-rejected {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+/* Mejoras para la navegación */
+.nav-sidebar .nav-item .nav-link {
+    padding: 0.5rem 1rem;
+}
+
+.nav-sidebar .nav-item .nav-link.active {
+    background-color: #007bff;
+    color: #fff;
+}
+
+/* Estilos para cards de dashboard */
+.small-box {
+    border-radius: 0.25rem;
+    box-shadow: 0 0 1px rgba(0,0,0,.125), 0 1px 3px rgba(0,0,0,.2);
+    position: relative;
+    display: block;
+    margin-bottom: 20px;
+}
+
+.small-box > .inner {
+    padding: 10px;
+}
+
+.small-box h3 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin: 0 0 10px 0;
+    white-space: nowrap;
+    padding: 0;
+}
+
+/* Estilos para loader */
+.loading {
+    position: relative;
+    pointer-events: none;
+}
+
+.loading:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255,255,255,0.7);
+    z-index: 1000;
+}
+
+/* Responsive adjustments */
+@media (max-width: 767.98px) {
+    .small-box {
+        text-align: center;
+    }
+    
+    .small-box .icon {
+        display: none;
+    }
+    
+    .small-box h3 {
+        font-size: 1.8rem;
+    }
+}

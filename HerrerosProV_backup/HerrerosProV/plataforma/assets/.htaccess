@@ -1,0 +1,17 @@
+# Configuración de tipos MIME para archivos estáticos
+AddType text/css .css
+AddType application/javascript .js
+
+# Permitir acceso a todos los archivos en este directorio
+<IfModule mod_authz_core.c>
+    Require all granted
+</IfModule>
+<IfModule !mod_authz_core.c>
+    Order allow,deny
+    Allow from all
+</IfModule>
+
+# Deshabilitar el procesamiento PHP en esta carpeta
+<IfModule mod_php7.c>
+    php_flag engine off
+</IfModule>

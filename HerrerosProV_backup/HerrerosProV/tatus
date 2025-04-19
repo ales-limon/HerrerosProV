@@ -1,0 +1,3 @@
+[33mfb1088f[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m)[m Agregar archivos de configuración
+[33mb1abd62[m Mejorado el flujo de redirección desde enlaces de correo
+[33m47cab27[m Corregida importación de PHPMailer en config/common.php

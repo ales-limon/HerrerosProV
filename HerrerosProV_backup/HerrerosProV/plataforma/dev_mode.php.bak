@@ -1,0 +1,63 @@
+<?php
+/**
+ * Modo de desarrollo para HerrerosPro
+ * Este archivo permite configurar el sistema para operar con menos restricciones
+ * mientras se mantiene la estructura de roles y permisos
+ */
+
+// Verificar si el archivo ya ha sido incluido
+if (!defined('DEV_MODE_INCLUDED')) {
+    define('DEV_MODE_INCLUDED', true);
+    
+    // Iniciar sesión si no está iniciada
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+    
+    // Configuración del modo de desarrollo
+    define('DEV_MODE', true);
+    define('DEV_SKIP_AUTH', true);  // Omitir verificación de autenticación
+    define('DEV_SKIP_CSRF', true);  // Omitir verificación de CSRF
+    define('DEV_DEFAULT_ROLE', 'admin'); // Rol por defecto
+    
+    // Función para crear una sesión de usuario de desarrollo
+    function create_dev_session($role = null) {
+        $role = $role ?? DEV_DEFAULT_ROLE;
+        
+        // Verificar si el rol es válido
+        if (!isset(ROLES[$role])) {
+            $role = 'admin'; // Usar admin como fallback
+        }
+        
+        // Crear sesión de usuario de desarrollo
+        $_SESSION['plataforma_user'] = [
+            'id' => 1,
+            'nombre' => 'Usuario de Desarrollo',
+            'email' => 'dev@herrerospro.com',
+            'rol' => $role,
+            'dev_mode' => true
+        ];
+        
+        return $_SESSION['plataforma_user'];
+    }
+    
+    // Función para modificar el comportamiento de Auth::isAuthenticated
+    function override_auth_methods() {
+        // Esta función se llamará desde el archivo auth.php
+        // para modificar el comportamiento de los métodos de autenticación
+    }
+    
+    // Crear sesión de desarrollo si no existe y DEV_SKIP_AUTH está habilitado
+    if (DEV_SKIP_AUTH && !isset($_SESSION['plataforma_user'])) {
+        create_dev_session();
+    }
+    
+    // Mensaje de advertencia en modo de desarrollo
+    if (!headers_sent() && !isset($_SESSION['dev_mode_warning'])) {
+        $_SESSION['dev_mode_warning'] = true;
+        echo '<div style="background-color: #fff3cd; color: #856404; padding: 10px; margin: 10px 0; border: 1px solid #ffeeba; border-radius: 4px; text-align: center;">
+            <strong>¡Modo de Desarrollo Activo!</strong> Las restricciones de autenticación están desactivadas.
+            <button onclick="this.parentNode.style.display=\'none\';" style="background: none; border: none; cursor: pointer; float: right;">&times;</button>
+        </div>';
+    }
+}

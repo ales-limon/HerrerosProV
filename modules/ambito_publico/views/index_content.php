@@ -117,16 +117,16 @@ $primary_dark = '#343a40';
                     Optimiza tus procesos, mejora tu productividad y haz crecer tu negocio.
                 </p>
                 <div class="animate__animated animate__fadeInUp animate__delay-2s">
-                    <a href="<?php echo PUBLIC_URL; ?>public/views/registro.php" class="btn btn-lg me-3" style="background-color: white; color: var(--primary-color); border: 3px solid white; font-weight: bold; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); padding: 12px 24px; transition: all 0.3s ease;">
+                    <a href="<?php echo BASE_URL; ?>public/index.php?route=registro" class="btn btn-lg me-3" style="background-color: white; color: var(--primary-color); border: 3px solid white; font-weight: bold; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); padding: 12px 24px; transition: all 0.3s ease;">
                         <i class="fas fa-rocket me-2"></i>Comenzar Ahora
                     </a>
-                    <a href="<?php echo PUBLIC_URL; ?>public/views/demo.php" class="btn btn-lg" style="background-color: transparent; color: white; border: 3px solid white; font-weight: bold; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); padding: 12px 24px; transition: all 0.3s ease;">
+                    <a href="#" class="btn btn-lg" style="background-color: transparent; color: white; border: 3px solid white; font-weight: bold; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); padding: 12px 24px; transition: all 0.3s ease;"> 
                         <i class="fas fa-play-circle me-2"></i>Ver Demo
                     </a>
                 </div>
             </div>
             <div class="col-lg-6 d-none d-lg-block animate__animated animate__fadeInRight">
-                <img src="<?php echo ASSETS_URL; ?>img/logo.png" alt="HerrerosPro Dashboard" class="img-fluid rounded shadow" style="max-width: 55%; margin: 0 auto; display: block; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important; border: 3px solid rgba(255, 255, 255, 0.3); padding: 10px; background-color: rgba(255, 255, 255, 0.1);">
+                <img src="<?php echo BASE_URL; ?>assets/img/logo.png" alt="HerrerosPro Dashboard" class="img-fluid rounded shadow" style="max-width: 55%; margin: 0 auto; display: block; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important; border: 3px solid rgba(255, 255, 255, 0.3); padding: 10px; background-color: rgba(255, 255, 255, 0.1);">
             </div>
         </div>
     </div>
@@ -189,7 +189,7 @@ $primary_dark = '#343a40';
                             <li class="mb-3"><i class="fas fa-check text-success me-2"></i>Cotizaciones básicas</li>
                             <li class="mb-3"><i class="fas fa-check text-success me-2"></i>Control de inventario</li>
                         </ul>
-                        <a href="<?php echo PUBLIC_URL; ?>public/views/registro.php?plan=basico" class="btn btn-outline-primary d-block">Elegir Plan</a>
+                        <a href="<?php echo BASE_URL; ?>public/index.php?route=registro&plan=basico" class="btn btn-outline-primary d-block">Elegir Plan</a>
                     </div>
                 </div>
             </div>
@@ -204,7 +204,7 @@ $primary_dark = '#343a40';
                             <li class="mb-3"><i class="fas fa-check text-success me-2"></i>Gestión de proyectos</li>
                             <li class="mb-3"><i class="fas fa-check text-success me-2"></i>Reportes avanzados</li>
                         </ul>
-                        <a href="<?php echo PUBLIC_URL; ?>public/views/registro.php?plan=profesional" class="btn btn-primary d-block">Elegir Plan</a>
+                        <a href="<?php echo BASE_URL; ?>public/index.php?route=registro&plan=profesional" class="btn btn-primary d-block">Elegir Plan</a>
                     </div>
                 </div>
             </div>
@@ -218,7 +218,7 @@ $primary_dark = '#343a40';
                             <li class="mb-3"><i class="fas fa-check text-success me-2"></i>Múltiples sucursales</li>
                             <li class="mb-3"><i class="fas fa-check text-success me-2"></i>Soporte prioritario</li>
                         </ul>
-                        <a href="<?php echo PUBLIC_URL; ?>public/views/registro.php?plan=enterprise" class="btn btn-outline-primary d-block">Elegir Plan</a>
+                        <a href="<?php echo BASE_URL; ?>public/index.php?route=registro&plan=enterprise" class="btn btn-outline-primary d-block">Elegir Plan</a>
                     </div>
                 </div>
             </div>
@@ -233,7 +233,7 @@ $primary_dark = '#343a40';
             <div class="col-lg-8">
                 <h2 class="text-white mb-4">¿Listo para llevar tu negocio al siguiente nivel?</h2>
                 <p class="text-white mb-4">Únete a miles de empresas que confían en nuestra plataforma para gestionar sus proyectos de construcción.</p>
-                <a href="<?php echo PUBLIC_URL; ?>public/views/registro.php" class="btn btn-lg cta-button" style="background-color: white; color: var(--primary-color); border: 3px solid white; font-weight: bold; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); padding: 12px 24px; transition: all 0.3s ease;">Comenzar Ahora</a>
+                <a href="<?php echo BASE_URL; ?>public/index.php?route=registro" class="btn btn-lg cta-button" style="background-color: white; color: var(--primary-color); border: 3px solid white; font-weight: bold; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); padding: 12px 24px; transition: all 0.3s ease;">Comenzar Ahora</a>
             </div>
         </div>
     </div>

@@ -1,0 +1,11 @@
+Corrección para el formulario de registro:
+
+El problema está en la acción del formulario en el archivo registro_content.php.
+
+Cambiar:
+<form id="registroForm" method="post" action="<?php echo PUBLIC_URL; ?>public/controllers/registro_controller.php" class="needs-validation" novalidate>
+
+Por:
+<form id="registroForm" method="post" action="<?php echo PUBLIC_URL; ?>controllers/registro_controller.php" class="needs-validation" novalidate>
+
+La constante PUBLIC_URL ya incluye la ruta al directorio public, por lo que no es necesario incluirla nuevamente en la acción del formulario.

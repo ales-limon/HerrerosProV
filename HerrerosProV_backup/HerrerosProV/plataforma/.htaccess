@@ -1,0 +1,18 @@
+# Configuración básica
+RewriteEngine On
+RewriteBase /HerrerosPro/plataforma/
+
+# Permitir acceso directo a assets
+RewriteRule ^assets/ - [L]
+
+# Tipos MIME
+<IfModule mod_mime.c>
+    AddType application/javascript .js
+    AddType text/javascript .js
+    AddType text/css .css
+</IfModule>
+
+# Redirigir todo lo demás al front controller
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [L,QSA]

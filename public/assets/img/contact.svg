@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="500" height="500">
+  <!-- Fondo -->
+  <rect width="500" height="500" fill="#f8f9fa" rx="20" ry="20" />
+  
+  <!-- Sobre -->
+  <rect x="100" y="150" width="300" height="200" fill="#ffffff" stroke="#17a2b8" stroke-width="5" rx="10" ry="10" />
+  <path d="M100,150 L250,250 L400,150" fill="none" stroke="#17a2b8" stroke-width="5" />
+  
+  <!-- Icono de mensaje -->
+  <circle cx="250" cy="320" r="30" fill="#17a2b8" />
+  <path d="M235,320 L250,335 L265,320" fill="none" stroke="#ffffff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
+  
+  <!-- Líneas decorativas -->
+  <line x1="150" y1="100" x2="350" y2="100" stroke="#17a2b8" stroke-width="5" stroke-linecap="round" />
+  <line x1="120" y1="400" x2="380" y2="400" stroke="#17a2b8" stroke-width="5" stroke-linecap="round" />
+  
+  <!-- Círculos decorativos -->
+  <circle cx="100" cy="100" r="15" fill="#17a2b8" />
+  <circle cx="400" cy="100" r="15" fill="#17a2b8" />
+  <circle cx="100" cy="400" r="15" fill="#17a2b8" />
+  <circle cx="400" cy="400" r="15" fill="#17a2b8" />
+</svg> 

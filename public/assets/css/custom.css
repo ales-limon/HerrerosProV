@@ -1,0 +1,56 @@
+/* Redondear las esquinas del formulario de login */
+.login-box .card {
+    border-radius: 15px !important; /* Redondear todas las esquinas */
+    box-shadow: 0 4px 8px rgba(17, 16, 16, 0.1) !important; /* Añadir una sombra suave para resaltar */
+    overflow: hidden; /* Asegurar que el contenido se ajuste al borde redondeado */
+}
+
+/* Estilo personalizado para el separador */
+.separator {
+    border: 0;
+    height: 1px;
+    background: linear-gradient(to right, #ccc, #fff, #ccc);
+    margin: 20px 0; /* Ajustar el margen para separar los elementos */
+}
+.link-black {
+    color: #000 !important; /* Cambiar el color a negro */
+    text-decoration: none; /* Quitar subrayado */
+}
+
+.link-black:hover {
+    color: #333 !important; /* Un gris oscuro para el hover */
+    text-decoration: underline; /* Añadir subrayado al pasar el cursor */
+}
+
+
+.main-footer {
+    background-color: #343a40; /* Color de fondo oscuro */
+    color: #ffffff; /* Texto blanco */
+    padding: 10px 20px; /* Ajustar el relleno del footer */
+    font-size: 0.9em; /* Tamaño de fuente ligeramente más pequeño */
+}
+
+.main-footer a {
+    color: #ffc107; /* Color amarillo para los enlaces */
+    text-decoration: none;
+}
+
+.main-footer a:hover {
+    color: #fff; /* Cambiar a blanco cuando se pase el cursor */
+    text-decoration: underline;
+}
+
+.table {
+    font-size: 0.9rem;
+}
+
+.table th, .table td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.badge {
+    font-size: 0.8rem;
+    padding: 0.4em 0.6em;
+}
+

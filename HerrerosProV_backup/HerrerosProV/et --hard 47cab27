@@ -1,0 +1,3 @@
+fb1088f - Agregar archivos de configuración
+b1abd62 - Mejorado el flujo de redirección desde enlaces de correo
+47cab27 - Corregida importación de PHPMailer en config/common.php
