@@ -32,7 +32,7 @@ function verify_csrf_token($token) {
     $valid = hash_equals($_SESSION['csrf_token'], $token);
     
     // Regenerar token después de la verificación para evitar reutilización
-    generate_csrf_token();
+    // generate_csrf_token();
     
     return $valid;
 }

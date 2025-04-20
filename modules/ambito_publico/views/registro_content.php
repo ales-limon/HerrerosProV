@@ -7,7 +7,7 @@
 $primary_color = '#17a2b8';
 $primary_dark = '#343a40';
 
-// Iniciar sesión si no está iniciada
+// Iniciar sesión si no está iniciada (el layout ya debería hacerlo, pero por seguridad)
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
@@ -17,9 +17,15 @@ if (!isset($_SESSION['csrf_token'])) {
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
 }
 
-// Recuperar datos del formulario en caso de error (para no perder la información)
-$formData = $_SESSION['form_data'] ?? [];
-unset($_SESSION['form_data']); // Limpiar después de usar
+// Recuperar errores y datos del formulario en caso de fallo de validación
+$registroErrores = $_SESSION['registro_errores'] ?? [];
+$formData = $_SESSION['registro_data'] ?? [];
+// Limpiar después de usar para no mostrarlos de nuevo en recargas
+unset($_SESSION['registro_errores'], $_SESSION['registro_data']);
+
+// La variable $planSeleccionado viene del RegistroController
+// No necesitamos leerla de $_GET aquí, ya está disponible.
+
 ?>
 <style>
 :root {
@@ -208,220 +214,245 @@ a:hover {
             <div class="col-lg-8">
                 <div class="elegant-card">
                     <div class="elegant-label">Solicita tu cuenta</div>
-                    <h2 class="text-center mb-4">Solicitud de Cuenta</h2>
+                    <h2 class="text-center mb-4">Formulario de Registro</h2>
                     
-                    <?php if (isset($_SESSION['success'])): ?>
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        <i class="fas fa-check-circle me-2"></i><?php echo htmlspecialchars($_SESSION['success']); ?>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                    <?php unset($_SESSION['success']); ?>
-                    <?php endif; ?>
-                    
-                    <?php if (isset($_SESSION['error'])): ?>
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <i class="fas fa-exclamation-circle me-2"></i><?php echo htmlspecialchars($_SESSION['error']); ?>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                    <?php unset($_SESSION['error']); ?>
-                    <?php endif; ?>
-                    
-                    <form id="registroForm" method="post" action="<?php echo BASE_URL; ?>public/controllers/registro_controller.php" class="needs-validation" novalidate>
-                        <!-- Token CSRF -->
-                        <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token'] ?? ''; ?>">
-                        
-                        <div class="alert alert-info">
-                            <i class="fas fa-info-circle me-2"></i>
-                            Completa este formulario para solicitar una cuenta en HerrerosPro. Tu solicitud será revisada por nuestro equipo y te contactaremos a la brevedad.
+                    <?php 
+                    // Asegurarse de que la sesión esté iniciada para leer mensajes
+                    if (session_status() === PHP_SESSION_NONE) {
+                        session_start();
+                    }
+                    ?>
+
+                    <!-- Mostrar errores de validación directa (si los hay) -->
+                    <?php if (!empty($registroErrores)): /* $registroErrores viene directo del controller, no de sesión */ ?>
+                        <div class="alert alert-danger" role="alert">
+                            <h4 class="alert-heading">Error en el Registro</h4>
+                            <p>Por favor, corrige los siguientes errores:</p>
+                            <ul>
+                                <?php foreach ($registroErrores as $error): ?>
+                                    <li><?php echo htmlspecialchars($error); ?></li>
+                                <?php endforeach; ?>
+                            </ul>
                         </div>
+                    <?php endif; ?>
+                    
+                    <!-- Mostrar errores generales (después de redirección) -->
+                    <?php if (isset($_SESSION['error_message'])): ?>
+                        <div class="alert alert-danger" role="alert">
+                             <i class="fas fa-exclamation-triangle me-2"></i>
+                             <?php echo htmlspecialchars($_SESSION['error_message']); unset($_SESSION['error_message']); ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php 
+                        // Obtener mensaje flash de éxito
+                        $flashSuccessMessage = getFlash('success'); 
+                    ?>
+
+                    <!-- Mostrar mensaje de éxito (después de redirección) -->
+                    <?php if ($flashSuccessMessage): // Mostrar si hay un mensaje flash ?>
+                        <div id="success-message-alert" class="alert alert-success" role="alert">
+                             <i class="fas fa-check-circle me-2"></i> 
+                             <?php echo htmlspecialchars($flashSuccessMessage); // Mostrar el mensaje flash ?>
+                         </div>
+                         <!-- Barra de progreso para redirección -->
+                         <div class="progress" style="height: 20px; margin-top: 15px; margin-bottom: 20px;">
+                            <div id="redirect-progress-bar" class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">Redirigiendo...</div>
+                        </div>
+                          <div class="text-center mt-4 mb-4">
+                              <!-- Ya no necesitamos este botón aquí si vamos a redirigir automáticamente -->
+                          </div>
+                    <?php else: // Solo mostrar formulario si no hay mensaje de éxito ?>
+                    
+                    <?php
+                    // Recuperar datos y errores del formulario si existen en la sesión (tras redirección por error)
+                    $formData = $_SESSION['form_data'] ?? [];
+                    $formErrors = $_SESSION['registroErrores'] ?? []; // Usamos la clave correcta que puso el controller
+                    unset($_SESSION['form_data'], $_SESSION['registroErrores']); // Limpiar después de usar
+                    ?>
+
+                    <!-- Mostrar resumen de errores de validación específicos del formulario -->
+                    <?php if (!empty($formErrors)): ?>
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <h5 class="alert-heading"><i class="fas fa-exclamation-triangle me-2"></i>Error en el Formulario</h5>
+                            <p>Por favor, corrige los siguientes errores:</p>
+                            <ul class="mb-0">
+                                <?php foreach ($formErrors as $field => $error): ?>
+                                    <li><?php echo htmlspecialchars($error); ?></li>
+                                <?php endforeach; ?>
+                            </ul>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    <?php endif; ?>
+                    
+                    <form id="registroForm" method="post" action="<?php echo PUBLIC_URL; ?>?route=do_registro" class="needs-validation" novalidate>
+                        <!-- Token CSRF -->
+                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
                         
-                        <h5 class="mb-3 mt-4">Información del Propietario</h5>
-                        
+                        <?php if (isset($plan_info) && $plan_info): ?>
+                            <!-- Caso 1: Plan preseleccionado -->
+                            <div class="alert alert-info" role="alert">
+                                <h5 class="alert-heading">Plan Seleccionado: <?php echo htmlspecialchars(ucfirst($plan_info['nombre'])); ?></h5>
+                                <p><?php echo htmlspecialchars($plan_info['descripcion']); ?></p>
+                                <hr>
+                                <p class="mb-0">Precio: <strong>$<?php echo htmlspecialchars(number_format($plan_info['precio'], 2)); ?> / mes</strong></p>
+                            </div>
+                            <input type="hidden" name="plan" value="<?php echo htmlspecialchars($plan_info['id']); ?>">
+                        <?php elseif (isset($planes_disponibles) && !empty($planes_disponibles)): ?>
+                            <!-- Caso 2: No hay plan preseleccionado, mostrar selector -->
+                            <div class="mb-3">
+                                <label for="plan" class="form-label">Selecciona un Plan <span class="text-danger">*</span></label>
+                                <select class="form-select <?php echo isset($formErrors['plan']) ? 'is-invalid' : ''; ?>" id="plan" name="plan" required>
+                                    <option value="" selected disabled>Elige tu plan...</option>
+                                    <?php foreach ($planes_disponibles as $p): ?>
+                                        <option value="<?php echo htmlspecialchars($p['id']); ?>" <?php echo (isset($formData['plan']) && $formData['plan'] == $p['id']) ? 'selected' : ''; ?>>
+                                            <?php echo htmlspecialchars(ucfirst($p['nombre'])); ?> ($<?php echo htmlspecialchars(number_format($p['precio'], 2)); ?>/mes)
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                                <?php if (isset($formErrors['plan'])): ?>
+                                    <div class="invalid-feedback">
+                                        Por favor, selecciona un plan de suscripción.
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                        <?php else: ?>
+                             <!-- Caso 3: Error - No hay planes disponibles -->
+                             <div class="alert alert-warning" role="alert">
+                                 No hay planes disponibles para seleccionar en este momento.
+                             </div>
+                             <!-- Podrías deshabilitar el botón de envío o mostrar un mensaje más prominente -->
+                        <?php endif; ?>
+
+                        <!-- Campos del formulario -->
+                        <h4 class="mb-3">Datos del Propietario</h4>
                         <div class="row">
-                            <div class="col-md-6 mb-4">
-                                <label for="nombre" class="form-label">Nombre <span class="text-danger">*</span></label>
+                            <div class="col-md-6 mb-3">
+                                <label for="nombre" class="form-label">Nombre Completo <span class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-user"></i></span>
-                                    <input type="text" class="form-control" id="nombre" name="nombre" 
-                                           required pattern="[A-Za-zÁÉÍÓÚáéíóúñÑ\s]{2,50}" 
-                                           title="Solo se permiten letras y espacios (2-50 caracteres)"
-                                           value="<?php echo htmlspecialchars($formData['nombre'] ?? ''); ?>"
-                                           maxlength="50">
-                                    <div class="invalid-feedback">
-                                        Por favor ingresa un nombre válido (solo letras y espacios).
-                                    </div>
+                                    <input type="text" class="form-control <?php echo isset($formErrors['nombre']) ? 'is-invalid' : ''; ?>" id="nombre" name="nombre" 
+                                           value="<?php echo htmlspecialchars($formData['nombre'] ?? ''); ?>" required>
+                                    <?php if (isset($formErrors['nombre'])): ?>
+                                        <div class="invalid-feedback">
+                                            <?php echo htmlspecialchars($formErrors['nombre']); ?>
+                                        </div>
+                                    <?php endif; ?>
                                 </div>
                             </div>
-                            
-                            <div class="col-md-6 mb-4">
+                            <div class="col-md-6 mb-3">
                                 <label for="apellidos" class="form-label">Apellidos <span class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-user"></i></span>
-                                    <input type="text" class="form-control" id="apellidos" name="apellidos" 
-                                           required pattern="[A-Za-zÁÉÍÓÚáéíóúñÑ\s]{2,50}" 
-                                           title="Solo se permiten letras y espacios (2-50 caracteres)"
-                                           value="<?php echo htmlspecialchars($formData['apellidos'] ?? ''); ?>"
-                                           maxlength="50">
-                                    <div class="invalid-feedback">
-                                        Por favor ingresa apellidos válidos (solo letras y espacios).
-                                    </div>
+                                    <input type="text" class="form-control <?php echo isset($formErrors['apellidos']) ? 'is-invalid' : ''; ?>" id="apellidos" name="apellidos" 
+                                           value="<?php echo htmlspecialchars($formData['apellidos'] ?? ''); ?>" required>
+                                    <?php if (isset($formErrors['apellidos'])): ?>
+                                        <div class="invalid-feedback">
+                                            <?php echo htmlspecialchars($formErrors['apellidos']); ?>
+                                        </div>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
-                        
-                        <h5 class="mb-3 mt-4">Información del Taller</h5>
-                        
-                        <div class="mb-4">
-                            <label for="nombre_taller" class="form-label">Nombre del Taller <span class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-store"></i></span>
-                                <input type="text" class="form-control" id="nombre_taller" name="nombre_taller" 
-                                       required pattern="[A-Za-z0-9ÁÉÍÓÚáéíóúñÑ\s\.\-\&]{2,100}" 
-                                       title="Ingrese un nombre válido (2-100 caracteres)"
-                                       value="<?php echo htmlspecialchars($formData['nombre_taller'] ?? ''); ?>"
-                                       maxlength="100">
-                                <div class="invalid-feedback">
-                                    Por favor ingresa un nombre de taller válido.
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="mb-4">
-                            <label for="rfc" class="form-label">RFC <small class="text-muted">(opcional)</small></label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-id-card"></i></span>
-                                <input type="text" class="form-control" id="rfc" name="rfc" 
-                                       pattern="^([A-ZÑ&]{3,4})?([0-9]{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12][0-9]|3[01]))?([A-Z\d]{3})?$" 
-                                       title="Ingrese un RFC válido (13 caracteres para personas físicas, 12 para morales)"
-                                       value="<?php echo htmlspecialchars($formData['rfc'] ?? ''); ?>"
-                                       maxlength="13">
-                                <div class="invalid-feedback">
-                                    El RFC no tiene un formato válido.
-                                </div>
-                                <div class="form-text">
-                                    Si aún no cuentas con RFC, puedes dejarlo en blanco.
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="mb-4">
-                            <label for="direccion" class="form-label">Dirección del Taller <span class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
-                                <input type="text" class="form-control" id="direccion" name="direccion" 
-                                       required pattern=".{5,200}" 
-                                       title="Ingrese una dirección válida (5-200 caracteres)"
-                                       value="<?php echo htmlspecialchars($formData['direccion'] ?? ''); ?>"
-                                       maxlength="200">
-                                <div class="invalid-feedback">
-                                    Por favor ingresa la dirección de tu taller.
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <h5 class="mb-3 mt-4">Información de Contacto</h5>
-                        
-                        <div class="mb-4">
+
+                        <div class="mb-3">
                             <label for="email" class="form-label">Correo Electrónico <span class="text-danger">*</span></label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                                <input type="email" class="form-control" id="email" name="email" 
-                                       required pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" 
-                                       title="Ingrese un correo electrónico válido"
-                                       value="<?php echo htmlspecialchars($formData['email'] ?? ''); ?>"
-                                       maxlength="100">
-                                <div class="invalid-feedback">
-                                    Por favor ingresa un correo electrónico válido.
-                                </div>
+                                <input type="email" class="form-control <?php echo isset($formErrors['email']) ? 'is-invalid' : ''; ?>" id="email" name="email" 
+                                       value="<?php echo htmlspecialchars($formData['email'] ?? ''); ?>" required>
+                                <?php if (isset($formErrors['email'])): ?>
+                                    <div class="invalid-feedback">
+                                        <?php echo htmlspecialchars($formErrors['email']); ?>
+                                    </div>
+                                <?php endif; ?>
                             </div>
                         </div>
-                        
-                        <div class="mb-4">
-                            <label for="telefono" class="form-label">Teléfono <span class="text-danger">*</span></label>
+
+                        <div class="mb-3">
+                            <label for="nombre_taller" class="form-label">Nombre del Taller <span class="text-danger">*</span></label>
                             <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-phone"></i></span>
-                                <input type="tel" class="form-control" id="telefono" name="telefono" 
-                                       required pattern="[0-9]{10}" 
-                                       title="Ingrese un número de teléfono de 10 dígitos"
-                                       value="<?php echo htmlspecialchars($formData['telefono'] ?? ''); ?>"
-                                       maxlength="10">
-                                <div class="invalid-feedback">
-                                    Por favor ingresa un número de teléfono válido (10 dígitos).
+                                <span class="input-group-text"><i class="fas fa-store"></i></span>
+                                <input type="text" class="form-control <?php echo isset($formErrors['nombre_taller']) ? 'is-invalid' : ''; ?>" id="nombre_taller" name="nombre_taller" 
+                                       value="<?php echo htmlspecialchars($formData['nombre_taller'] ?? ''); ?>" required>
+                                <?php if (isset($formErrors['nombre_taller'])): ?>
+                                    <div class="invalid-feedback">
+                                        <?php echo htmlspecialchars($formErrors['nombre_taller']); ?>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="telefono" class="form-label">Teléfono de Contacto</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                    <input type="tel" class="form-control <?php echo isset($formErrors['telefono']) ? 'is-invalid' : ''; ?>" id="telefono" name="telefono" 
+                                           value="<?php echo htmlspecialchars($formData['telefono'] ?? ''); ?>">
+                                    <?php if (isset($formErrors['telefono'])): ?>
+                                        <div class="invalid-feedback">
+                                            <?php echo htmlspecialchars($formErrors['telefono']); ?>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="rfc" class="form-label">RFC <small class="text-muted">(opcional)</small></label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-id-card"></i></span>
+                                    <input type="text" class="form-control" id="rfc" name="rfc" 
+                                           value="<?php echo htmlspecialchars($formData['rfc'] ?? ''); ?>">
                                 </div>
                             </div>
                         </div>
-                        
-                        <h5 class="mb-3 mt-4">Plan Seleccionado</h5>
-                        
-                        <div class="plan-selector p-3 mb-4">
-                            <?php
-                            // Obtener el plan de la URL si existe
-                            $plan_seleccionado = isset($_GET['plan']) ? htmlspecialchars($_GET['plan']) : ($formData['plan'] ?? '');
-                            ?>
-                            
-                            <div class="form-check mb-2">
-                                <input class="form-check-input" type="radio" name="plan" id="plan_basico" value="basico" <?php echo ($plan_seleccionado == 'basico') ? 'checked' : ''; ?> required>
-                                <label class="form-check-label" for="plan_basico">
-                                    <strong>Plan Básico</strong> - $499/mes
-                                </label>
-                            </div>
-                            
-                            <div class="form-check mb-2">
-                                <input class="form-check-input" type="radio" name="plan" id="plan_profesional" value="profesional" <?php echo ($plan_seleccionado == 'profesional') ? 'checked' : ''; ?> required>
-                                <label class="form-check-label" for="plan_profesional">
-                                    <strong>Plan Profesional</strong> - $999/mes
-                                </label>
-                            </div>
-                            
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="plan" id="plan_enterprise" value="enterprise" <?php echo ($plan_seleccionado == 'enterprise') ? 'checked' : ''; ?> required>
-                                <label class="form-check-label" for="plan_enterprise">
-                                    <strong>Plan Enterprise</strong> - $1,999/mes
-                                </label>
-                            </div>
-                            
-                            <div class="invalid-feedback">
-                                Por favor selecciona un plan.
-                            </div>
-                            
-                            <div class="mt-2">
-                                <a href="<?php echo PUBLIC_URL; ?>public/views/planes.php" class="text-decoration-none">
-                                    <i class="fas fa-info-circle me-1"></i>Ver detalles de los planes
-                                </a>
-                            </div>
+
+                        <div class="mb-3">
+                            <label for="direccion" class="form-label">Dirección del Taller</label>
+                            <textarea class="form-control <?php echo isset($formErrors['direccion']) ? 'is-invalid' : ''; ?>" id="direccion" name="direccion" rows="3"><?php echo htmlspecialchars($formData['direccion'] ?? ''); ?></textarea>
+                            <?php if (isset($formErrors['direccion'])): ?>
+                                <div class="invalid-feedback">
+                                    <?php echo htmlspecialchars($formErrors['direccion']); ?>
+                                </div>
+                            <?php endif; ?>
                         </div>
-                        
-                        <div class="mb-4 form-check">
-                            <input type="checkbox" class="form-check-input" id="terminos" name="terminos" required>
+
+                        <div class="form-check mb-4">
+                            <input class="form-check-input" type="checkbox" value="" id="terminos" required>
                             <label class="form-check-label" for="terminos">
-                                Acepto los <a href="#" class="text-decoration-none">Términos y Condiciones</a> y la <a href="#" class="text-decoration-none">Política de Privacidad</a>
+                                Acepto los <a href="#" target="_blank">Términos y Condiciones</a> y la <a href="#" target="_blank">Política de Privacidad</a>. <span class="text-danger">*</span>
                             </label>
                             <div class="invalid-feedback">
-                                Debes aceptar los términos y condiciones para continuar.
+                                Debes aceptar los términos y condiciones.
                             </div>
                         </div>
-                        
-                        <!-- Campo Honeypot para detectar bots -->
-                        <div class="d-none">
-                            <label for="website">Website</label>
-                            <input type="text" name="website" id="website" autocomplete="off">
-                        </div>
-                        
-                        <!-- Campo de tiempo para prevenir envíos automatizados -->
-                        <input type="hidden" name="form_time" value="<?php echo time(); ?>">
-                        
-                        <!-- Botón de Envío -->
+
                         <div class="d-grid gap-2">
-                            <button type="submit" id="submitBtn" class="btn btn-lg" style="background-color: var(--primary-color); color: white; border: 3px solid var(--primary-color); font-weight: bold; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); padding: 12px 24px; transition: all 0.3s ease;">
-                                <i class="fas fa-paper-plane me-2"></i>Enviar Solicitud
-                            </button>
+                            <button type="submit" class="btn btn-primary btn-lg">Enviar Solicitud</button>
                         </div>
                         
-                        <div class="text-center mt-4">
-                            <p class="mb-0">¿Ya tienes una cuenta? <a href="<?php echo PUBLIC_URL; ?>public/views/login.php" class="text-decoration-none" style="color: var(--primary-color); font-weight: bold;">Inicia Sesión</a></p>
-                        </div>
+                        <p class="mt-3 text-center">
+                            ¿Ya tienes una cuenta? <a href="<?php echo PUBLIC_URL; ?>?route=login">Inicia Sesión aquí</a>
+                        </p>
                     </form>
+                  <?php endif; // Fin del else para no mostrar formulario si hay éxito ?>
                 </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action Section -->
+<section class="py-5 cta" style="background-color: var(--primary-color);">
+    <div class="container">
+        <div class="row justify-content-center text-center">
+            <div class="col-lg-8 text-white">
+                <h2 class="mb-4">¿Listo para transformar tu taller?</h2>
+                <p class="lead mb-4">Completa tu registro y comienza a optimizar la gestión de tu taller de manera profesional.</p>
+                <!-- Botón adaptado para la página de registro -->
+                <a href="<?php echo PUBLIC_URL; ?>?route=planes" class="btn btn-lg" style="background-color: white; color: var(--primary-color); border: 3px solid white; font-weight: bold; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); padding: 12px 24px; transition: all 0.3s ease;">
+                    <i class="fas fa-list-alt me-2"></i>Ver Planes Disponibles
+                </a>
             </div>
         </div>
     </div>
@@ -432,6 +463,50 @@ a:hover {
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('registroForm');
     const submitBtn = document.getElementById('submitBtn');
+    const emailInput = document.getElementById('email');
+    
+    // Sistema de prevención de duplicados con localStorage
+    const STORAGE_KEY = 'herreros_pro_solicitudes';
+    
+    // Función para verificar si un email ya ha sido enviado
+    function isEmailAlreadySubmitted(email) {
+        if (!email) return false;
+        
+        // Normalizar email (minúsculas, sin espacios)
+        email = email.toLowerCase().trim();
+        
+        // Obtener solicitudes guardadas
+        const submittedEmails = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        return submittedEmails.includes(email);
+    }
+    
+    // Función para guardar un email como enviado
+    function saveSubmittedEmail(email) {
+        if (!email) return;
+        
+        // Normalizar email
+        email = email.toLowerCase().trim();
+        
+        // Obtener y actualizar lista
+        const submittedEmails = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        if (!submittedEmails.includes(email)) {
+            submittedEmails.push(email);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(submittedEmails));
+        }
+    }
+    
+    // Verificar al cargar la página
+    if (emailInput && emailInput.value) {
+        if (isEmailAlreadySubmitted(emailInput.value)) {
+            // Crear alerta de advertencia
+            const warningDiv = document.createElement('div');
+            warningDiv.className = 'alert alert-warning mt-2';
+            warningDiv.innerHTML = '<i class="fas fa-exclamation-triangle me-2"></i> Ya existe una solicitud con este correo electrónico.';
+            
+            // Insertar después del campo de email
+            emailInput.parentNode.insertAdjacentElement('afterend', warningDiv);
+        }
+    }
     
     // Función para sanitizar inputs
     function sanitizarInput(input) {
@@ -456,6 +531,26 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         form.addEventListener('submit', function(event) {
+            // Verificar duplicados antes de enviar
+            if (emailInput && emailInput.value) {
+                if (isEmailAlreadySubmitted(emailInput.value)) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    
+                    // Mostrar mensaje de error
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'alert alert-danger mt-3';
+                    errorDiv.innerHTML = '<i class="fas fa-exclamation-circle me-2"></i> <strong>Error:</strong> Ya has enviado una solicitud con este correo electrónico anteriormente. Por favor, espera a que un administrador revise tu solicitud o utiliza otro correo.';
+                    
+                    // Insertar al principio del formulario
+                    form.prepend(errorDiv);
+                    
+                    // Scroll hacia el mensaje
+                    errorDiv.scrollIntoView({ behavior: 'smooth' });
+                    return;
+                }
+            }
+            
             // Sanitizar todos los inputs antes de enviar
             const allInputs = form.querySelectorAll('input:not([type=hidden]):not([type=checkbox])');
             allInputs.forEach(input => {
@@ -472,6 +567,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     firstInvalid.focus();
                 }
             } else {
+                // Guardar email como enviado
+                if (emailInput && emailInput.value) {
+                    saveSubmittedEmail(emailInput.value);
+                }
+                
                 // Deshabilitar botón para prevenir múltiples envíos
                 submitBtn.disabled = true;
                 submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Procesando...';
@@ -502,5 +602,63 @@ document.addEventListener('DOMContentLoaded', function() {
             this.value = this.value.toUpperCase();
         });
     }
+    
+    // Mostrar/Ocultar contraseña
+    const passwordInput = document.getElementById('password');
+    const togglePassword = document.getElementById('togglePassword');
+    if (passwordInput && togglePassword) {
+        togglePassword.addEventListener('click', function () {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.querySelector('i').classList.toggle('fa-eye');
+            this.querySelector('i').classList.toggle('fa-eye-slash');
+        });
+    }
+    
+    // Mostrar/Ocultar confirmar contraseña
+    const confirmPasswordInput = document.getElementById('confirm_password');
+    const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
+    if (confirmPasswordInput && toggleConfirmPassword) {
+        toggleConfirmPassword.addEventListener('click', function () {
+            const type = confirmPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            confirmPasswordInput.setAttribute('type', type);
+            this.querySelector('i').classList.toggle('fa-eye');
+            this.querySelector('i').classList.toggle('fa-eye-slash');
+        });
+    }
+    
+    // Añadir lógica para la barra de progreso y redirección
+    const successAlert = document.getElementById('success-message-alert');
+    const progressBar = document.getElementById('redirect-progress-bar');
+    const homeUrl = '<?php echo PUBLIC_URL; ?>'; // Obtener URL base desde PHP
+
+    if (successAlert && progressBar) {
+        // Hacer visible la barra (si estaba oculta)
+        progressBar.parentElement.style.display = 'block'; 
+
+        let progress = 0;
+        const intervalTime = 30; // ms -> 3000ms / 100 = 30ms por paso
+        const duration = 5000; // 5 segundos en ms
+        const steps = duration / intervalTime;
+        const increment = 100 / steps;
+
+        const interval = setInterval(() => {
+            progress += increment;
+            if (progress >= 100) {
+                progress = 100;
+                progressBar.style.width = '100%';
+                progressBar.setAttribute('aria-valuenow', Math.round(progress));
+                clearInterval(interval);
+
+                // Redirigir después de un breve instante (ej. 500ms después de completar)
+                setTimeout(() => {
+                    window.location.href = homeUrl; 
+                }, 5500); 
+            } else {
+                progressBar.style.width = progress + '%';
+                progressBar.setAttribute('aria-valuenow', Math.round(progress));
+            }
+        }, intervalTime);
+    }
 });
-</script> 
+</script>
