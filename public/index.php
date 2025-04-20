@@ -51,14 +51,15 @@ if (empty($route)) {
 
 // Mapeo simple de rutas públicas a [ControllerClass, method]
 $publicRoutes = [
-    'home'         => ['HomeController', 'index'],
-    'login'        => ['AuthController', 'login'],     // Muestra formulario login (GET)
-    'do_login'     => ['AuthController', 'doLogin'],   // Procesa login (POST)
-    'registro'     => ['RegistroController', 'register'], // Muestra formulario registro (GET)
+    'home' => ['HomeController', 'index'],
+    'login' => ['LoginController', 'index'],
+    'registro' => ['RegistroController', 'index'],
+    'contacto' => ['ContactoController', 'index'],
+    'procesar_contacto' => ['ContactoController', 'procesarFormulario'],
+    'do_login' => ['AuthController', 'doLogin'],   // Procesa login (POST)
     'do_registro'  => ['RegistroController', 'doRegister'],// Procesa registro (POST)
-    'contacto'     => ['ContactController', 'index'],   // Muestra formulario contacto (GET)
-    'send_contact' => ['ContactController', 'send'],    // Procesa contacto (POST)
-    'planes'       => ['PageController', 'planes'],    // Muestra página de planes (GET)
+    'send_contact' => ['ContactoController', 'send'],    // Procesa contacto (POST)
+    'planes'       => ['PlanesController', 'index'],    // Muestra página de planes (GET)
     // Añadir aquí otras páginas públicas si existen
 ];
 

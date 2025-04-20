@@ -233,7 +233,7 @@ $primary_dark = '#343a40';
             <div class="col-lg-8">
                 <h2 class="text-white mb-4">¿Listo para llevar tu negocio al siguiente nivel?</h2>
                 <p class="text-white mb-4">Únete a miles de empresas que confían en nuestra plataforma para gestionar sus proyectos de construcción.</p>
-                <a href="<?php echo BASE_URL; ?>public/index.php?route=registro" class="btn btn-lg cta-button" style="background-color: white; color: var(--primary-color); border: 3px solid white; font-weight: bold; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); padding: 12px 24px; transition: all 0.3s ease;">Comenzar Ahora</a>
+                <a href="<?php echo PUBLIC_URL; ?>?route=registro" class="btn btn-lg cta-button" style="background-color: white; color: var(--primary-color); border: 3px solid white; font-weight: bold; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); padding: 12px 24px; transition: all 0.3s ease;">Comenzar Ahora</a>
             </div>
         </div>
     </div>

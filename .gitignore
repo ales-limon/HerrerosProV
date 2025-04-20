@@ -45,7 +45,7 @@ config/mail.production.php
 # Comentar estas líneas solo si se necesita hacer cambios específicos
 public/views/contacto_content.php
 public/views/index_content.php
-public/views/planes_content.php
+# public/views/planes_content.php
 public/views/demo_content.php
 public/views/login_content.php
 public/views/login.php

@@ -38,3 +38,8 @@ define('ASSETS_PATH',     PUBLIC_PATH . 'assets' . DS); // Ruta a los assets DEN
 define('APP_NAME', 'HerrerosPro');
 define('VERSION', '1.0.0');
 define('CREADO_POR', 'Alejandro Limón');
+
+// Cargar configuración de correo (usamos la de desarrollo por ahora)
+require_once CONFIG_PATH . 'mail.development.php';
+
+?>

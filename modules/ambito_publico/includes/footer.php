@@ -78,7 +78,7 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <!-- Custom JS -->
-<script src="<?php echo PUBLIC_URL; ?>public/assets/js/main.js"></script>
+<script src="<?php echo PUBLIC_URL; ?>assets/js/main.js"></script>
 
 </body>
-</html> 
+</html>

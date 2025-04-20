@@ -122,6 +122,7 @@ $formErrors = isset($_SESSION['form_errors']) ? $_SESSION['form_errors'] : [];
 // Limpiar datos de sesión después de usarlos
 unset($_SESSION['form_data'], $_SESSION['form_errors']);
 ?>
+
 <!-- Hero Section -->
 <section class="hero bg-primary text-white py-5" style="background-color: var(--primary-color);">
     <div class="container">
@@ -221,7 +222,19 @@ unset($_SESSION['form_data'], $_SESSION['form_errors']);
                     <div class="card-body p-4">
                         <h3 class="card-title mb-4 text-primary">Envíanos un Mensaje</h3>
                         
-                        <form id="contactForm" method="POST" action="<?php echo BASE_URL; ?>public/controllers/contact_controller.php" class="contact-form needs-validation" novalidate>
+                        <?php 
+                        // Mostrar mensajes flash (éxito/error del formulario)
+                        if (isset($_SESSION['flash_message'])): 
+                            $message = $_SESSION['flash_message'];
+                            unset($_SESSION['flash_message']); // Limpiar el mensaje para que no se muestre de nuevo
+                        ?>
+                        <div class="alert alert-<?php echo htmlspecialchars($message['type']); ?> alert-dismissible fade show" role="alert">
+                            <?php echo $message['text']; // Usar echo directamente ya que el texto viene de nuestro controlador ?>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        <?php endif; ?>
+                        
+                        <form id="contactForm" method="POST" action="<?php echo PUBLIC_URL; ?>?route=procesar_contacto" class="contact-form needs-validation" novalidate>
                             <!-- Token CSRF para prevenir ataques CSRF -->
                             <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                             
@@ -405,17 +418,7 @@ unset($_SESSION['form_data'], $_SESSION['form_errors']);
 </section>
 
 <!-- Call to Action -->
-<section class="cta py-5" style="background-color: var(--primary-color);">
-    <div class="container">
-        <div class="row justify-content-center text-center">
-            <div class="col-lg-8">
-                <h2 class="text-white mb-4">¿Listo para llevar tu negocio al siguiente nivel?</h2>
-                <p class="text-white mb-4">Únete a miles de empresas que confían en nuestra plataforma para gestionar sus proyectos de construcción.</p>
-                <a href="<?php echo PUBLIC_URL; ?>public/views/registro.php" class="btn btn-lg cta-button" style="background-color: white; color: var(--primary-color); border: 3px solid white; font-weight: bold; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); padding: 12px 24px; transition: all 0.3s ease;">Comenzar Ahora</a>
-            </div>
-        </div>
-    </div>
-</section>
+<?php include __DIR__ . '/../includes/cta_section.php'; ?>
 
 <!-- Script para validación del formulario -->
 <script>
@@ -543,4 +546,4 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
-</script> 
+</script>

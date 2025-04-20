@@ -1,6 +1,11 @@
 <?php
 // includes/shared/common.php
 
+// Iniciar sesión si no está iniciada (HACER ESTO PRIMERO)
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 // Cargar configuración general
 // require_once CONFIG_PATH . 'config.php'; // Eliminado: Ahora se incluye en public/index.php
 
@@ -14,8 +19,3 @@ require_once SHARED_PATH . 'funciones.php';
 // require_once HELPERS_PATH . 'medidas.php'; // Temporalmente comentado porque medidas.php no existe
 // require_once HELPERS_PATH . 'textos.php'; // Temporalmente comentado porque textos.php no existe
 require_once HELPERS_PATH . 'security_helper.php';
-
-// Iniciar sesión si no está iniciada
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}

@@ -1,11 +1,36 @@
 <?php
 /**
  * Contenido de la página de planes y precios
+ * Combinando diseño original con datos dinámicos del controlador.
  */
 
-// Definir variables de estilo
-$primary_color = '#17a2b8';
-$primary_dark = '#343a40';
+// Definir variables de estilo (o asegurarse de que estén disponibles si vienen de otro lado)
+$primary_color = '#17a2b8'; // Color principal turquesa/cyan
+$primary_dark = '#343a40'; // Color oscuro para hover/detalles
+
+// Asegurarse de que la variable $planes exista (viene del PlanesController)
+if (!isset($planes)) {
+    // Fallback por si acaso (aunque el controlador debería proveerla)
+    $planes = [
+        [
+            'nombre' => 'Básico',
+            'precio' => '499',
+            'popular' => false,
+            'caracteristicas' => [
+                ['texto' => 'Gestión de clientes', 'activo' => true],
+                ['texto' => 'Cotizaciones básicas', 'activo' => true],
+                ['texto' => 'Control de inventario', 'activo' => true],
+                ['texto' => 'Facturación simple', 'activo' => true],
+                ['texto' => 'Soporte por email', 'activo' => true],
+                ['texto' => 'Gestión de proyectos', 'activo' => false],
+                ['texto' => 'Reportes avanzados', 'activo' => false],
+                ['texto' => 'Múltiples usuarios', 'activo' => false],
+            ],
+            'id_plan' => 'basico' // ID para el enlace
+        ],
+        // Añadir otros planes aquí si es necesario como fallback
+    ];
+}
 ?>
 <style>
 :root {
@@ -15,10 +40,11 @@ $primary_dark = '#343a40';
 
 /* Estilos específicos de la página de planes */
 .hero {
-    background-color: var(--primary-color);
+    /* Ya no se usa background-color aquí, se aplica inline */
     color: white;
 }
 
+/* Reajustando botones primarios para que usen el color definido */
 .btn-primary {
     background-color: var(--primary-color);
     border-color: var(--primary-color);
@@ -30,6 +56,16 @@ $primary_dark = '#343a40';
     transform: translateY(-3px);
     box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
 }
+
+.btn-outline-primary {
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+.btn-outline-primary:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
 
 .text-primary {
     color: var(--primary-color) !important;
@@ -113,7 +149,7 @@ $primary_dark = '#343a40';
     top: 20px;
     right: -30px;
     transform: rotate(45deg);
-    background-color: #ffc107;
+    background-color: #ffc107; /* Color de la cinta */
     color: #343a40;
     padding: 5px 40px;
     font-weight: bold;
@@ -122,12 +158,12 @@ $primary_dark = '#343a40';
 
 /* Estilos para la sección de FAQ */
 .accordion-button:not(.collapsed) {
-    background-color: rgba(23, 162, 184, 0.1);
+    background-color: rgba(23, 162, 184, 0.1); /* Usa el color primario con transparencia */
     color: var(--primary-color);
 }
 
 .accordion-button:focus {
-    box-shadow: 0 0 0 0.25rem rgba(23, 162, 184, 0.25);
+    box-shadow: 0 0 0 0.25rem rgba(23, 162, 184, 0.25); /* Usa el color primario con transparencia */
     border-color: var(--primary-color);
 }
 
@@ -143,7 +179,7 @@ $primary_dark = '#343a40';
 </style>
 
 <!-- Hero Section -->
-<section class="hero bg-primary text-white py-5" style="background-color: var(--primary-color);">
+<section class="hero py-5" style="background-color: var(--primary-color); color: white;">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-6">
@@ -154,10 +190,11 @@ $primary_dark = '#343a40';
                     Elige el plan que mejor se adapte a las necesidades de tu taller de herrería.
                 </p>
                 <div class="animate__animated animate__fadeInUp animate__delay-2s">
-                    <a href="<?php echo PUBLIC_URL; ?>public/views/registro.php" class="btn btn-lg me-3" style="background-color: white; color: var(--primary-color); border: 3px solid white; font-weight: bold; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); padding: 12px 24px; transition: all 0.3s ease;">
+                    <!-- Usar rutas correctas -->
+                    <a href="<?php echo PUBLIC_URL; ?>?route=registro" class="btn btn-lg me-3" style="background-color: white; color: var(--primary-color); border: 3px solid white; font-weight: bold; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); padding: 12px 24px; transition: all 0.3s ease;">
                         <i class="fas fa-rocket me-2"></i>Comenzar Ahora
                     </a>
-                    <a href="<?php echo PUBLIC_URL; ?>public/views/demo.php" class="btn btn-lg" style="background-color: transparent; color: white; border: 3px solid white; font-weight: bold; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); padding: 12px 24px; transition: all 0.3s ease;">
+                    <a href="<?php echo PUBLIC_URL; ?>?route=demo" class="btn btn-lg" style="background-color: transparent; color: white; border: 3px solid white; font-weight: bold; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); padding: 12px 24px; transition: all 0.3s ease;">
                         <i class="fas fa-play-circle me-2"></i>Ver Demo
                     </a>
                 </div>
@@ -169,92 +206,46 @@ $primary_dark = '#343a40';
     </div>
 </section>
 
-<!-- Planes de Precios -->
+<!-- Planes de Precios (Dinámico) -->
 <section class="py-5">
     <div class="container">
         <h2 class="text-center mb-5">Nuestros Planes</h2>
-        <div class="row g-4">
-            <!-- Plan Básico -->
-            <div class="col-md-4">
-                <div class="card pricing-card h-100 shadow-sm">
-                    <div class="pricing-header">
-                        <h3>Básico</h3>
-                    </div>
-                    <div class="card-body p-4">
-                        <div class="pricing-price text-center">
-                            $499<small>/mes</small>
+        <div class="row g-4 justify-content-center">
+            <?php foreach ($planes as $plan): ?>
+                <div class="col-md-4">
+                    <div class="card pricing-card h-100 shadow-sm <?php echo $plan['popular'] ? 'pricing-popular' : ''; ?>">
+                        <?php if ($plan['popular']): ?>
+                            <div class="ribbon">Popular</div>
+                        <?php endif; ?>
+                        <div class="pricing-header">
+                            <h3><?php echo htmlspecialchars($plan['nombre']); ?></h3>
                         </div>
-                        <ul class="pricing-features">
-                            <li><i class="fas fa-check-circle"></i>Gestión de clientes</li>
-                            <li><i class="fas fa-check-circle"></i>Cotizaciones básicas</li>
-                            <li><i class="fas fa-check-circle"></i>Control de inventario</li>
-                            <li><i class="fas fa-check-circle"></i>Facturación simple</li>
-                            <li><i class="fas fa-check-circle"></i>Soporte por email</li>
-                            <li><i class="fas fa-times-circle text-muted"></i>Gestión de proyectos</li>
-                            <li><i class="fas fa-times-circle text-muted"></i>Reportes avanzados</li>
-                            <li><i class="fas fa-times-circle text-muted"></i>Múltiples usuarios</li>
-                        </ul>
-                        <div class="d-grid gap-2 mt-4">
-                            <a href="<?php echo PUBLIC_URL; ?>public/views/registro.php?plan=basico" class="btn btn-outline-primary">Elegir Plan</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Plan Profesional -->
-            <div class="col-md-4">
-                <div class="card pricing-card pricing-popular h-100 shadow">
-                    <div class="ribbon">Popular</div>
-                    <div class="pricing-header">
-                        <h3>Profesional</h3>
-                    </div>
-                    <div class="card-body p-4">
-                        <div class="pricing-price text-center">
-                            $999<small>/mes</small>
-                        </div>
-                        <ul class="pricing-features">
-                            <li><i class="fas fa-check-circle"></i>Todo del Plan Básico</li>
-                            <li><i class="fas fa-check-circle"></i>Gestión de proyectos</li>
-                            <li><i class="fas fa-check-circle"></i>Reportes avanzados</li>
-                            <li><i class="fas fa-check-circle"></i>Hasta 5 usuarios</li>
-                            <li><i class="fas fa-check-circle"></i>Soporte prioritario</li>
-                            <li><i class="fas fa-check-circle"></i>Aplicación móvil</li>
-                            <li><i class="fas fa-check-circle"></i>Integración con contabilidad</li>
-                            <li><i class="fas fa-times-circle text-muted"></i>Múltiples sucursales</li>
-                        </ul>
-                        <div class="d-grid gap-2 mt-4">
-                            <a href="<?php echo PUBLIC_URL; ?>public/views/registro.php?plan=profesional" class="btn btn-primary">Elegir Plan</a>
+                        <div class="card-body p-4 d-flex flex-column">
+                            <div class="pricing-price text-center">
+                                $<?php echo htmlspecialchars($plan['precio']); ?><small>/mes</small>
+                            </div>
+                            <ul class="pricing-features mb-4">
+                                <?php foreach ($plan['caracteristicas'] as $caracteristica): ?>
+                                    <li>
+                                        <?php if ($caracteristica['activo']): ?>
+                                            <i class="fas fa-check-circle text-success"></i> <!-- Icono verde si está activo -->
+                                        <?php else: ?>
+                                            <i class="fas fa-times-circle text-muted"></i> <!-- Icono gris si no está activo -->
+                                        <?php endif; ?>
+                                        <?php echo htmlspecialchars($caracteristica['texto']); ?>
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
+                            <div class="d-grid gap-2 mt-auto"> <!-- mt-auto empuja el botón hacia abajo -->
+                                <a href="<?php echo PUBLIC_URL; ?>?route=registro&plan=<?php echo htmlspecialchars($plan['id_plan']); ?>"
+                                   class="btn <?php echo $plan['popular'] ? 'btn-primary' : 'btn-outline-primary'; ?>">
+                                    Elegir Plan
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            
-            <!-- Plan Enterprise -->
-            <div class="col-md-4">
-                <div class="card pricing-card h-100 shadow-sm">
-                    <div class="pricing-header">
-                        <h3>Enterprise</h3>
-                    </div>
-                    <div class="card-body p-4">
-                        <div class="pricing-price text-center">
-                            $1,999<small>/mes</small>
-                        </div>
-                        <ul class="pricing-features">
-                            <li><i class="fas fa-check-circle"></i>Todo del Plan Profesional</li>
-                            <li><i class="fas fa-check-circle"></i>Usuarios ilimitados</li>
-                            <li><i class="fas fa-check-circle"></i>Múltiples sucursales</li>
-                            <li><i class="fas fa-check-circle"></i>API para integraciones</li>
-                            <li><i class="fas fa-check-circle"></i>Personalización avanzada</li>
-                            <li><i class="fas fa-check-circle"></i>Soporte 24/7</li>
-                            <li><i class="fas fa-check-circle"></i>Capacitación personalizada</li>
-                            <li><i class="fas fa-check-circle"></i>Consultoría de implementación</li>
-                        </ul>
-                        <div class="d-grid gap-2 mt-4">
-                            <a href="<?php echo PUBLIC_URL; ?>public/views/registro.php?plan=enterprise" class="btn btn-outline-primary">Elegir Plan</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <?php endforeach; ?>
         </div>
     </div>
 </section>
@@ -264,16 +255,18 @@ $primary_dark = '#343a40';
     <div class="container">
         <h2 class="text-center mb-5">Comparativa de Planes</h2>
         <div class="table-responsive">
-            <table class="table table-bordered">
+            <table class="table table-bordered table-hover">
                 <thead class="table-dark">
                     <tr>
-                        <th>Características</th>
+                        <th class="w-25">Características</th>
+                        <!-- Ajusta los nombres si son diferentes en tu array $planes -->
                         <th class="text-center">Básico</th>
                         <th class="text-center">Profesional</th>
                         <th class="text-center">Enterprise</th>
                     </tr>
                 </thead>
                 <tbody>
+                    <!-- Ejemplo de filas (Asegúrate que coincidan con las características reales) -->
                     <tr>
                         <td>Gestión de clientes</td>
                         <td class="text-center"><i class="fas fa-check text-success"></i></td>
@@ -298,7 +291,7 @@ $primary_dark = '#343a40';
                         <td class="text-center"><i class="fas fa-check text-success"></i></td>
                         <td class="text-center"><i class="fas fa-check text-success"></i></td>
                     </tr>
-                    <tr>
+                     <tr>
                         <td>Reportes</td>
                         <td class="text-center">Básicos</td>
                         <td class="text-center">Avanzados</td>
@@ -310,30 +303,31 @@ $primary_dark = '#343a40';
                         <td class="text-center">Hasta 5</td>
                         <td class="text-center">Ilimitados</td>
                     </tr>
-                    <tr>
+                     <tr>
                         <td>Sucursales</td>
                         <td class="text-center">1</td>
                         <td class="text-center">1</td>
                         <td class="text-center">Múltiples</td>
                     </tr>
-                    <tr>
+                     <tr>
                         <td>Soporte</td>
                         <td class="text-center">Email</td>
                         <td class="text-center">Prioritario</td>
                         <td class="text-center">24/7</td>
                     </tr>
-                    <tr>
+                     <tr>
                         <td>Aplicación móvil</td>
                         <td class="text-center"><i class="fas fa-times text-danger"></i></td>
                         <td class="text-center"><i class="fas fa-check text-success"></i></td>
                         <td class="text-center"><i class="fas fa-check text-success"></i></td>
                     </tr>
-                    <tr>
+                     <tr>
                         <td>Personalización</td>
                         <td class="text-center">Limitada</td>
                         <td class="text-center">Estándar</td>
                         <td class="text-center">Avanzada</td>
                     </tr>
+                    <!-- Agrega más filas según las características definidas en tu array $planes -->
                 </tbody>
             </table>
         </div>
@@ -360,7 +354,7 @@ $primary_dark = '#343a40';
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Pregunta 2 -->
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="headingTwo">
@@ -374,7 +368,7 @@ $primary_dark = '#343a40';
                             </div>
                         </div>
                     </div>
-                    
+
                     <!-- Pregunta 3 -->
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="headingThree">
@@ -388,8 +382,8 @@ $primary_dark = '#343a40';
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Pregunta 4 -->
+
+                     <!-- Pregunta 4 -->
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="headingFour">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
@@ -402,8 +396,8 @@ $primary_dark = '#343a40';
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Pregunta 5 -->
+
+                     <!-- Pregunta 5 -->
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="headingFive">
                             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
@@ -423,35 +417,24 @@ $primary_dark = '#343a40';
 </section>
 
 <!-- Call to Action -->
-<section class="py-5" style="background-color: var(--primary-color);">
-    <div class="container">
-        <div class="row justify-content-center text-center">
-            <div class="col-lg-8 text-white">
-                <h2 class="mb-4">¿Listo para transformar tu taller?</h2>
-                <p class="lead mb-4">Elige el plan que mejor se adapte a tus necesidades y comienza a optimizar la gestión de tu taller de herrería hoy mismo.</p>
-                <a href="<?php echo PUBLIC_URL; ?>public/views/registro.php" class="btn btn-lg" style="background-color: white; color: var(--primary-color); border: 3px solid white; font-weight: bold; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); padding: 12px 24px; transition: all 0.3s ease;">
-                    <i class="fas fa-rocket me-2"></i>Comenzar Ahora
-                </a>
-            </div>
-        </div>
-    </div>
-</section>
+<?php include __DIR__ . '/../includes/cta_section.php'; ?>
 
-<!-- Script para efectos -->
+<!-- Script para efectos (asegúrate que jQuery esté cargado si lo necesitas) -->
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Efecto hover para botones
-    const buttons = document.querySelectorAll('.btn-lg');
-    buttons.forEach(button => {
-        button.addEventListener('mouseover', function() {
-            this.style.transform = 'translateY(-5px)';
-            this.style.boxShadow = '0 8px 15px rgba(0, 0, 0, 0.4)';
-        });
+// Este script ya no parece necesario ya que los efectos se manejan con CSS :hover
+// document.addEventListener('DOMContentLoaded', function() {
+//     // Efecto hover para botones
+//     const buttons = document.querySelectorAll('.btn-lg');
+//     buttons.forEach(button => {
+//         button.addEventListener('mouseover', function() {
+//             this.style.transform = 'translateY(-5px)';
+//             this.style.boxShadow = '0 8px 15px rgba(0, 0, 0, 0.4)';
+//         });
         
-        button.addEventListener('mouseout', function() {
-            this.style.transform = '';
-            this.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.3)';
-        });
-    });
-});
-</script> 
+//         button.addEventListener('mouseout', function() {
+//             this.style.transform = '';
+//             this.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.3)';
+//         });
+//     });
+// });
+</script>

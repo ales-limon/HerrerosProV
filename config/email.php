@@ -21,7 +21,7 @@ if (file_exists($env_config_file)) {
     define('SMTP_FROM_EMAIL', 'notificaciones@herrerospro.com');
     define('SMTP_FROM_NAME', 'HerrerosPro - Notificaciones');
     define('ADMIN_EMAIL', 'admin@herrerospro.com'); // Reemplazar con el correo del administrador real
-    define('SUPPORT_EMAIL', 'soporte@herrerospro.com');
+    define('SUPPORT_EMAIL', 'info@herrerospro.com');
     define('EMAIL_TEMPLATES_DIR', __DIR__ . '/../templates/email/');
     define('TOKEN_EXPIRATION_HOURS', 24);
 }

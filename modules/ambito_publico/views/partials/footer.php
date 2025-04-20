@@ -18,9 +18,9 @@
                 <h5 class="text-uppercase mb-4">Enlaces</h5>
                 <ul class="list-unstyled">
                     <li class="mb-2"><a href="<?php echo PUBLIC_URL; ?>" class="text-light">Inicio</a></li>
-                    <li class="mb-2"><a href="<?php echo PUBLIC_URL; ?>public/views/planes.php" class="text-light">Planes y Precios</a></li>
-                    <li class="mb-2"><a href="<?php echo PUBLIC_URL; ?>public/views/demo.php" class="text-light">Demo</a></li>
-                    <li class="mb-2"><a href="<?php echo PUBLIC_URL; ?>public/views/contacto.php" class="text-light">Contacto</a></li>
+                    <li class="mb-2"><a href="<?php echo PUBLIC_URL; ?>?route=planes" class="text-light">Planes y Precios</a></li>
+                    <li class="mb-2"><a href="<?php echo PUBLIC_URL; ?>?route=demo" class="text-light">Demo</a></li>
+                    <li class="mb-2"><a href="<?php echo PUBLIC_URL; ?>?route=contacto" class="text-light">Contacto</a></li>
                 </ul>
             </div>
             
@@ -78,7 +78,7 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <!-- Custom JS -->
-<script src="<?php echo PUBLIC_URL; ?>public/assets/js/main.js"></script>
+<script src="<?php echo ASSETS_URL; ?>js/main.js"></script>
 
 </body>
-</html> 
+</html>

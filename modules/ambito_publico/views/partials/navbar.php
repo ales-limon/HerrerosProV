@@ -22,22 +22,22 @@
                     <a class="nav-link <?php echo ($current_page == 'inicio') ? 'active' : ''; ?>" href="<?php echo PUBLIC_URL; ?>">Inicio</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <?php echo ($current_page == 'planes') ? 'active' : ''; ?>" href="<?php echo PUBLIC_URL; ?>public/views/planes.php">Planes y Precios</a>
+                    <a class="nav-link <?php echo ($current_page == 'planes') ? 'active' : ''; ?>" href="<?php echo PUBLIC_URL; ?>?route=planes">Planes y Precios</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <?php echo ($current_page == 'demo') ? 'active' : ''; ?>" href="<?php echo PUBLIC_URL; ?>public/views/demo.php">Demo</a>
+                    <a class="nav-link <?php echo ($current_page == 'demo') ? 'active' : ''; ?>" href="<?php echo PUBLIC_URL; ?>?route=demo">Demo</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <?php echo ($current_page == 'contacto') ? 'active' : ''; ?>" href="<?php echo PUBLIC_URL; ?>public/views/contacto.php">Contacto</a>
+                    <a class="nav-link <?php echo ($current_page == 'contacto') ? 'active' : ''; ?>" href="<?php echo PUBLIC_URL; ?>?route=contacto">Contacto</a>
                 </li>
             </ul>
 
             <!-- Botones de acceso -->
             <div class="d-flex">
-                <a href="<?php echo PUBLIC_URL; ?>public/views/login.php" class="btn btn-outline-primary me-2">
+                <a href="<?php echo PUBLIC_URL; ?>?route=login" class="btn btn-outline-primary me-2">
                     <i class="fas fa-sign-in-alt"></i> Acceder
                 </a>
-                <a href="<?php echo PUBLIC_URL; ?>public/views/registro.php" class="btn btn-primary">
+                <a href="<?php echo PUBLIC_URL; ?>?route=registro" class="btn btn-primary">
                     <i class="fas fa-user-plus"></i> Registrarse
                 </a>
             </div>
